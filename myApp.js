@@ -83,7 +83,7 @@ const findEditThenSave = (personId, done) => {
 };
 
 const findAndUpdate = (personName, done) => {
-  const ageToSet = 20;fhf
+  const ageToSet = 20;
 
   Person.findOneAndUpdate(
     {name: personName}, 
@@ -99,19 +99,36 @@ const findAndUpdate = (personName, done) => {
 
 
 const removeById = (personId, done) => {
-  done(null /*, data*/);
+  
+  Person.findByIdAndRemove(personId, (err, data) => {
+    if(err) return console.log(err);
+
+    done(null, data);
+  })
+
 };
 
 const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
 
-  done(null /*, data*/);
+  Person.remove({name: nameToRemove}, (err, response) => {
+    if(err) return console.log(err);
+    done(null, response);
+  })
 };
 
 const queryChain = (done) => {
   const foodToSearch = "burrito";
 
-  done(null /*, data*/);
+  Person
+  .find({ favoriteFoods: foodToSearch })
+  .sort("name")
+  .limit(2)
+  .select(['name', 'favoriteFoods'])
+  .exec(function(error, people) {
+    //do something here
+    done(null, people);
+  });
 };
 
 
@@ -120,6 +137,12 @@ const queryChain = (done) => {
 //     console.log(err);
 //   else
 //     console.log(f);
+// });
+
+
+// findPeopleByName("Gina Ambroise", (err, person) => {
+//   if(err) console.log(err);
+//   console.log(person);
 // })
 
 
@@ -131,7 +154,7 @@ const queryChain = (done) => {
 // });
 
 
-// findPersonById("6704b5749cc3c54278469275", (err, f) => {
+// findPersonById("670585a73a0cba4d665d56e7", (err, f) => {
 //   if(err)
 //     console.log(err);
 //   else
@@ -145,13 +168,28 @@ const queryChain = (done) => {
 //     console.log("Nouvelle donnee : "+ newData);
 // })
 
-findAndUpdate('Schneider Chery', (err, newData) => {
-  if(err)
-    console.log(err);
-  else
-    console.log(newData);
-});
+// findAndUpdate('Schneider Chery', (err, newData) => {
+//   if(err)
+//     console.log(err);
+//   else
+//     console.log(newData);
+// });
 
+
+// removeById("67057ed6e35b183c42f68278", (err, data) => {
+//   if(err) console.log(err);
+//   console.log(data);
+// })
+
+removeManyPeople((err, data) => {
+  if(err) console.log(err);
+  console.log(data)
+})
+
+queryChain((err, data) => {
+  if(err) console.log(err);
+  console.log(data);
+})
 
 /** **Well Done !!**
 /* You completed these challenges, let's go celebrate !

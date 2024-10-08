@@ -69,7 +69,17 @@ const findPersonById = (personId, done) => {
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
 
-  done(null /*, data*/);
+  findPersonById(personId, (err, personFound) => {
+    if(err) return console.log(err);
+
+    personFound.favoriteFoods.push(foodToAdd);
+
+    personFound.save((err, dataSaved) => {
+      if(err) return console.log(err);
+
+      done(null, dataSaved);
+    });
+  });
 };
 
 const findAndUpdate = (personName, done) => {
@@ -117,6 +127,13 @@ const queryChain = (done) => {
 //   else
 //     console.log(f);
 // })
+
+findEditThenSave("6704b5749cc3c54278469275", (err, newData) => {
+  if(err)
+    console.log(err)
+  else
+    console.log("Nouvelle donnee : "+ newData);
+})
 
 
 /** **Well Done !!**

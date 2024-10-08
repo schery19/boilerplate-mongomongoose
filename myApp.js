@@ -5,7 +5,7 @@ const { MongoClient } = require('mongodb');
 
 let mongoose = require('mongoose');
 
-let mongoClient = mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+let mongoClient = mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const Schema = mongoose.Schema;
 
@@ -85,8 +85,18 @@ const findEditThenSave = (personId, done) => {
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
 
-  done(null /*, data*/);
+  Person.findOneAndUpdate(
+    {name: personName}, 
+    {age: ageToSet}, 
+    {new: true}, 
+    (err, updatedDoc) => {
+      if(err) { done(err); return; }
+      console.log(updatedDoc)
+      done(null, updatedDoc);
+  });
 };
+
+
 
 const removeById = (personId, done) => {
   done(null /*, data*/);
@@ -128,12 +138,19 @@ const queryChain = (done) => {
 //     console.log(f);
 // })
 
-findEditThenSave("6704b5749cc3c54278469275", (err, newData) => {
+// findEditThenSave("6704b5749cc3c54278469275", (err, newData) => {
+//   if(err)
+//     console.log(err)
+//   else
+//     console.log("Nouvelle donnee : "+ newData);
+// })
+
+findAndUpdate('Schneider Chery', (err, newData) => {
   if(err)
-    console.log(err)
+    console.log(err);
   else
-    console.log("Nouvelle donnee : "+ newData);
-})
+    console.log(newData);
+});
 
 
 /** **Well Done !!**

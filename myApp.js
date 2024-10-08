@@ -1,26 +1,69 @@
 require('dotenv').config();
 
+const { MongoClient } = require('mongodb');
 
-let Person;
 
-const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+let mongoose = require('mongoose');
+
+let mongoClient = mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const Schema = mongoose.Schema;
+
+const personSchema = new Schema({
+  name: { type: String, required: true },
+  age: Number,
+  favoriteFoods: [String]
+});
+
+let Person = mongoose.model("Person", personSchema);
+
+const createAndSavePerson = (personData, done) => {
+
+  personToSave = new Person(personData)
+
+  personToSave.save((err, data) => {
+    if (err) return console.error(err);
+    done(null, data);
+  });
+  
 };
 
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+
+  Person.create(arrayOfPeople, (err, people) => {
+    if(err) return console.log(err);
+    done(null, people);
+  })
+
+  
 };
 
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+
+  Person.find({name: personName}, (err, personFound) => {
+    if(err) return console.log(err);
+
+    const people = personFound.map(p => new Person(p))
+
+    done(null, people);
+  })
+
 };
 
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  
+  Person.findOne({favoriteFoods: food}, (err, found) => {
+    if(err) return console.log(err);
+    done(null, found)
+  });
+
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById(personId, (err, f) => {
+    if(err) return console.log(err);
+    done(null, f);
+  })
 };
 
 const findEditThenSave = (personId, done) => {
@@ -50,6 +93,31 @@ const queryChain = (done) => {
 
   done(null /*, data*/);
 };
+
+
+// createAndSavePerson({name: "Gina Chery", age: 54, favoriteFoods: ["Pomme", "Ananas"]}, (err, f) => {
+//   if(err)
+//     console.log(err);
+//   else
+//     console.log(f);
+// })
+
+
+// findOneByFood(["Pomme", "Ananas"], (err, found) => {
+//   if(err)
+//     console.log(err);
+//   else
+//     console.log(found);
+// });
+
+
+// findPersonById("6704b5749cc3c54278469275", (err, f) => {
+//   if(err)
+//     console.log(err);
+//   else
+//     console.log(f);
+// })
+
 
 /** **Well Done !!**
 /* You completed these challenges, let's go celebrate !
